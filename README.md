@@ -8,8 +8,7 @@ and dark mode.
 
 Plugin id: `folio-bb`.
 
-![Sidebar with project cards and status badges, Dracula](docs/screenshots/cards-dark.png)
-![Collapsed folders with their rollup status](docs/screenshots/statuses-collapsed.png)
+![Project cards with status badges, and the same folders collapsed with their rollup status](docs/screenshots/sidebar-statuses.png)
 ![The same cards in the default theme (dark and light) and Nord](docs/screenshots/themes.png)
 
 ## What it changes
