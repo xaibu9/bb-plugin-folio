@@ -4,7 +4,7 @@
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { cleanup, log, openPage, stagePlugin, startInstance } from "./lib.mjs";
+import { cleanup, DESKTOP_LAYOUT_CSS, log, openPage, stagePlugin, startInstance } from "./lib.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "announce", "raw");
@@ -72,6 +72,7 @@ try {
     await page.goto(bb.base + href, { waitUntil: "domcontentloaded" });
     await page.waitForSelector('[role="tree"] section[data-sp-active]', { timeout: 60_000 });
     await page.addStyleTag({ content: "[data-bb-plugin=session-history]{display:none!important}" });
+    await page.addStyleTag({ content: DESKTOP_LAYOUT_CSS });
     await page.waitForTimeout(4000);
     const fold = async (name) => {
       await page.locator('[role="tree"] section[data-flip-key^="project:"] > [data-drag-image] > button', { hasText: name }).first().click();
@@ -113,7 +114,12 @@ try {
     if ((await needsYou.count()) > 0) {
       await needsYou.click();
       await page.waitForTimeout(600);
+      // The desktop app draws back/forward in the window title bar; a browser tab puts them next to
+      // the New thread button. The cover shows the desktop layout, so hide them for this shot only.
+      const arrows = await page.addStyleTag({ content: '[data-testid="app-sidebar-top-reserve-row"] div:has(> button[aria-label^="Go back"]){display:none!important}' });
+      await page.waitForTimeout(600);
       await sidebar("sidebar-cover.png");
+      await arrows.evaluate((el) => el.remove());
       await needsYou.click();
       await page.waitForTimeout(600);
     }
