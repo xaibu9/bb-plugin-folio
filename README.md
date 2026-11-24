@@ -1,5 +1,7 @@
 # Folio BB for bb
 
+![Folio BB](docs/screenshots/cover.png)
+
 A restyle of the bb thread sidebar: project folders become cards with a sticky
 header, threads inside a project sort by their last real activity, every row shows
 the icon of the agent it runs on, and New thread becomes a full-width button.
@@ -8,7 +10,6 @@ and dark mode.
 
 Plugin id: `folio-bb`.
 
-![Project cards with status badges, and the same folders collapsed with their rollup status](docs/screenshots/sidebar-statuses.png)
 ![The same cards in the default theme (dark and light) and Nord](docs/screenshots/themes.png)
 
 ## What it changes
