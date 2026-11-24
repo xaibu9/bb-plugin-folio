@@ -1,0 +1,36 @@
+{
+  "name": "bb-plugin-folio-bb",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Restyles the bb sidebar: project cards with sticky headers, threads sorted by real activity, provider icons on rows, a full-width New thread button.",
+  "engines": {
+    "bb": ">=0.50",
+    "bbPluginSdk": ">=0.6.157"
+  },
+  "bb": {
+    "name": "Folio BB",
+    "description": "Project cards with sticky headers, threads sorted by last activity, provider icons on rows and a full-width New thread button. Follows the active bb theme.",
+    "branding": {
+      "icon": "PanelLeft"
+    },
+    "server": "./server.ts",
+    "app": "./app.tsx"
+  },
+  "dependencies": {
+    "@get-bb/plugin-sdk": "0.6.157",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "playwright-core": "^1.63.0",
+    "typescript": "^5.7.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "bb plugin build",
+    "e2e": "node e2e/check.mjs"
+  },
+  "license": "MIT"
+}

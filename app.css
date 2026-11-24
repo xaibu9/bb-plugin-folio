@@ -1,0 +1,383 @@
+/*
+ * Every color comes from the active bb theme (see bb's theming reference), so the
+ * pack follows default, nord, dracula, solarized, gruvbox, catppuccin and light mode.
+ * Each part can be switched off in the plugin settings: the overlay lists the parts
+ * that are off in html[data-folio-off].
+ */
+:root {
+  /* --sp-accent-custom is set on <html> when a color is picked in the plugin settings. */
+  --sp-accent: var(--sp-accent-custom, var(--primary));
+  /* Public: other plugins (Fuel BB) read the sidebar accent from here; equals the theme accent unless a color is picked. */
+  --folio-accent: var(--sp-accent);
+  /* Name used before the rename; kept so older readers still follow the sidebar. */
+  --sidebar-polish-accent: var(--folio-accent);
+  --sp-fg: var(--sidebar-foreground);
+  --sp-muted: var(--muted-foreground);
+  /* Opaque surfaces: the sticky card header must hide the rows that scroll under it. */
+  --sp-surface: color-mix(in oklab, var(--sidebar-foreground) 5%, var(--sidebar));
+  --sp-highlight: color-mix(in oklab, var(--sp-accent) 14%, var(--sidebar));
+  --sp-card-head: color-mix(in oklab, var(--sp-accent) 8%, var(--sp-surface));
+  --sp-card-border: color-mix(in oklab, var(--sidebar-foreground) 22%, var(--sidebar));
+  --sp-button-border: color-mix(in oklab, var(--sp-accent) 45%, var(--sidebar-border));
+  /* Accent text on the tinted header and the "more" bar keeps contrast in light themes. */
+  --sp-accent-text: color-mix(in oklab, var(--sp-accent) 82%, var(--sidebar-foreground));
+  --sp-guide-color: color-mix(in oklab, var(--sidebar-foreground) 20%, transparent);
+}
+
+/* 1. New thread: large outlined button. Rail header slot and Top list item. */
+:root:not([data-folio-off~="button"]) [data-testid="app-sidebar-top-reserve-row"]:has([data-sidebar-header-slot]) {
+  --bb-app-chrome-row-height: 4rem;
+  padding-inline: 0.375rem;
+}
+:root:not([data-folio-off~="button"]) :is([data-testid="sidebar-header-slot"] button[aria-keyshortcuts], [data-sidebar-navigation-item="__bb__/new-thread"] > button) {
+  flex: 1 1 auto;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 2.75rem;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--sp-button-border);
+  border-radius: 0.625rem;
+  background: var(--sp-surface);
+  color: var(--sp-fg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+:root:not([data-folio-off~="button"]) :is([data-testid="sidebar-header-slot"] button[aria-keyshortcuts], [data-sidebar-navigation-item="__bb__/new-thread"] > button):is(:hover, [data-state="open"]) {
+  border-color: var(--sp-accent);
+  background: var(--sp-highlight);
+  color: var(--sp-fg);
+}
+:root:not([data-folio-off~="button"]) :is([data-testid="sidebar-header-slot"] button[aria-keyshortcuts], [data-sidebar-navigation-item="__bb__/new-thread"] > button):focus-visible {
+  outline: 2px solid var(--ring, var(--sp-accent));
+  outline-offset: -2px;
+}
+:root:not([data-folio-off~="button"]) :is([data-testid="sidebar-header-slot"] button[aria-keyshortcuts], [data-sidebar-navigation-item="__bb__/new-thread"] > button) > span {
+  flex: 0 1 auto;
+}
+:root:not([data-folio-off~="button"]) :is([data-testid="sidebar-header-slot"] button[aria-keyshortcuts], [data-sidebar-navigation-item="__bb__/new-thread"] > button) > :first-child {
+  color: var(--sp-accent-text);
+  opacity: 1;
+}
+
+/* 2. Thread tree status counters under the search field; the search block keeps a gap below. */
+:root:not([data-folio-off~="counters"]) div:has(> button[data-status-filter]) {
+  display: none;
+}
+:root:not([data-folio-off~="counters"]) div:has(> div > button[data-status-filter]) {
+  margin-top: 0.375rem;
+  margin-bottom: 0.5rem;
+  padding-inline: 0;
+}
+
+/* 3. Static key hints: "/" and "esc" in search, "⇧⌘I next" on Needs you. */
+:root:not([data-folio-off~="counters"]) :is([data-thread-search-open] > span[aria-hidden]:last-child, [role="search"]:has(> input[data-thread-search]) > span[aria-hidden]:last-child, kbd[data-section-hint]) {
+  display: none;
+}
+
+/* 4. Needs you as a card tinted with the theme's attention color (the accent can be gray). */
+[data-needs-you] [data-needs-you-queue] {
+  --row-base: color-mix(in oklab, var(--attention) 12%, var(--sidebar));
+  /* Mixed here, not on :root, so the accent override below reaches it. */
+  border-color: color-mix(in oklab, var(--attention) 45%, transparent);
+}
+:root[data-folio-needs-accent] [data-needs-you] {
+  --attention: var(--sp-accent);
+}
+:root[data-folio-needs-accent] [data-needs-you] [data-needs-you-queue] {
+  --row-base: var(--sp-highlight);
+}
+
+/* 5. The provider icon takes the status glyph's place on every row; the status moves to a badge on its corner (section 10). */
+:root:not([data-folio-off~="icons"]) [data-thread-row]:has([data-provider-icon]) [data-status-glyph] {
+  visibility: hidden;
+}
+:root:not([data-folio-off~="icons"]) [data-thread-row] [data-provider-icon] {
+  position: absolute;
+  top: 50%;
+  left: 1px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+/* Parent rows show their expand chevron in the same slot on hover or toggle focus. */
+@media (hover: hover) {
+  :root:not([data-folio-off~="icons"]) [data-thread-row]:hover:has(button[aria-label$=" subthreads"]) [data-provider-icon] {
+    visibility: hidden;
+  }
+}
+:root:not([data-folio-off~="icons"]) [data-thread-row]:has(button[aria-label$=" subthreads"]:focus-visible) [data-provider-icon] {
+  visibility: hidden;
+}
+:root:not([data-folio-off~="icons"]) [data-needs-you-item="unread"] > span:first-child {
+  display: none;
+}
+:root:not([data-folio-off~="icons"]) [data-needs-you-item="unread"] > [data-provider-icon] {
+  order: -1;
+  margin-inline: 1px;
+}
+:root:not([data-folio-off~="icons"]) [data-needs-you-item]:not([data-needs-you-item="unread"]) > [data-provider-icon] {
+  display: none;
+}
+
+/* 6. Activity age from the plugin (data-sp-age) instead of the tree's attention time. */
+[data-row-age][data-sp-age] {
+  font-size: 0;
+}
+[data-row-age][data-sp-age]::after {
+  content: attr(data-sp-age);
+  font-size: var(--text-2xs, 0.6875rem);
+}
+
+/* 7. Rows re-sorted by activity: tree lines drawn for the new sibling order. */
+[data-sp-guides] > span[aria-hidden]:not(:has(+ div)),
+[data-sp-guides] > span:not([aria-hidden]):not([data-hover-actions]) > span + span {
+  display: none;
+}
+[data-sp-guides]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -2px 0;
+  pointer-events: none;
+  background-image: var(--sp-guide-img, none);
+  background-size: var(--sp-guide-size, 0 0);
+  background-position: var(--sp-guide-pos, 0 0);
+  background-repeat: no-repeat;
+}
+
+/* 8. Project folders as cards; the header sticks while its rows scroll by. */
+:root:not([data-folio-off~="cards"]) [role="tree"]:not([aria-label="Pinned threads"]) section[data-flip-key] {
+  /* The header draws the top edge: when it sticks, the card's own top edge scrolls away with the rows. */
+  border: 1px solid var(--sp-card-border);
+  border-top: 0;
+  border-radius: 11px;
+}
+:root:not([data-folio-off~="cards"]) [role="tree"]:not([aria-label="Pinned threads"]) section[data-flip-key] > [data-drag-image] {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  height: calc(2.125rem + 1px);
+  /* Over the card's side borders, so a stuck header keeps a whole outline of the same color. */
+  margin-inline: -1px;
+  padding-inline: calc(0.625rem + 1px) calc(0.5rem + 1px);
+  border: 1px solid var(--sp-card-border);
+  border-radius: 11px 11px 0 0;
+  background: var(--sp-card-head);
+  /* The tree fades its hover actions into --row-base. */
+  --row-base: var(--sp-card-head);
+}
+:root:not([data-folio-off~="cards"]) [role="tree"]:not([aria-label="Pinned threads"]) section[data-flip-key]:not(:has(> div > [role="group"])) > [data-drag-image] {
+  margin-bottom: -1px;
+  border-radius: 11px;
+}
+:root:not([data-folio-off~="cards"]) [role="tree"]:not([aria-label="Pinned threads"]) section[data-flip-key] > [data-drag-image] > button:first-of-type {
+  color: var(--sp-fg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+:root:not([data-folio-off~="cards"]) [role="tree"]:not([aria-label="Pinned threads"]) section[data-flip-key] > [data-drag-image] > button:first-of-type > span:first-child {
+  color: var(--sp-accent-text);
+}
+:root:not([data-folio-off~="cards"]) [role="tree"]:not([aria-label="Pinned threads"]) section[data-flip-key] > div > [role="group"]:not([aria-label]) {
+  isolation: isolate;
+  margin-top: 0;
+  padding: 4px;
+}
+
+/* 9. A few roots per folder, then "Show N more". */
+[data-sp-hidden] {
+  display: none;
+}
+[data-sp-more] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 1.75rem;
+  margin-top: 2px;
+  border-top: 1px dashed var(--sp-card-border);
+}
+[data-sp-more] > button {
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--sp-accent-text);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+[data-sp-more] > button[data-sp-action="less"] {
+  color: var(--sp-muted);
+}
+[data-sp-more] > button:hover {
+  color: var(--sp-fg);
+}
+[data-sp-more] > button:focus-visible {
+  outline: 2px solid var(--ring, var(--sp-accent));
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+[data-sp-more] > button[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root :is([data-testid="sidebar-header-slot"] button[aria-keyshortcuts], [data-sidebar-navigation-item="__bb__/new-thread"] > button),
+  [data-sp-more] > button {
+    transition: none;
+  }
+}
+
+/* Accent picker on the plugin settings page. */
+.sp-accent-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sp-swatch {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.sp-swatch[aria-pressed="true"] {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+.sp-swatch:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.sp-swatch-theme {
+  background: var(--primary);
+  box-shadow: inset 0 0 0 3px var(--background);
+}
+.sp-swatch-custom {
+  background: conic-gradient(#ff5555, #ffb86c, #f1fa8c, #50fa7b, #8be9fd, #7aa2f7, #b795f3, #ff79c6, #ff5555);
+}
+.sp-swatch-custom input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.sp-hex {
+  width: 6rem;
+  height: 1.75rem;
+  padding: 0 0.625rem;
+  border: 1px solid var(--input);
+  border-radius: 999px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.sp-hex:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.sp-accent-note {
+  margin: 0.5rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+/* 10. Status badges: a dot on the corner of the row's AI icon, a rollup left of a folder's count. */
+:root {
+  --sp-badge-ring: var(--sidebar);
+}
+[data-sp-state="error"],
+[data-sp-folder="error"] {
+  --sp-badge: var(--destructive);
+}
+[data-sp-state="waiting"],
+[data-sp-folder="waiting"] {
+  --sp-badge: var(--attention);
+}
+[data-sp-state="done"],
+[data-sp-folder="done"] {
+  --sp-badge: var(--success);
+}
+@keyframes sp-spin {
+  to { transform: rotate(360deg); }
+}
+:root:not([data-folio-off~="icons"]):not([data-folio-off~="status"]) [data-thread-row][data-sp-state] [data-provider-icon]::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  box-sizing: border-box;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--sp-badge);
+  box-shadow: 0 0 0 1.5px var(--row-base, var(--sp-badge-ring));
+}
+:root:not([data-folio-off~="icons"]):not([data-folio-off~="status"]) [data-thread-row][data-sp-state="working"] [data-provider-icon]::after {
+  right: -4px;
+  bottom: -4px;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--sp-accent);
+  border-right-color: transparent;
+  background: var(--row-base, var(--sp-badge-ring));
+  animation: sp-spin 0.9s linear infinite;
+}
+/* Without provider icons the badge sits on bb's glyph instead. */
+:root[data-folio-off~="icons"] [data-thread-row] [data-status-glyph] {
+  position: relative;
+}
+:root:not([data-folio-off~="status"]) section[data-sp-folder] > [data-drag-image] [data-section-tail]::before {
+  content: "";
+  order: -2;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--sp-badge);
+}
+:root:not([data-folio-off~="status"]) section[data-sp-folder="working"] > [data-drag-image] [data-section-tail]::before {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--sp-accent);
+  border-right-color: transparent;
+  background: transparent;
+  animation: sp-spin 0.9s linear infinite;
+}
+/* Working and failed at once: the spinner keeps a red dot beside it. */
+:root:not([data-folio-off~="status"]) section[data-sp-folder-error] > [data-drag-image] [data-section-tail]::after {
+  content: "";
+  order: -1;
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--destructive);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-thread-row][data-sp-state="working"] [data-provider-icon]::after,
+  section[data-sp-folder="working"] > [data-drag-image] [data-section-tail]::before {
+    animation: none;
+    border-right-color: var(--sp-accent);
+  }
+}
+
+/* 11. The folder holding the open thread: a stronger header tint and an accent outline, collapsed or not. */
+:root:not([data-folio-off~="active"]):not([data-folio-off~="cards"]) [role="tree"] section[data-flip-key][data-sp-active] {
+  --sp-card-border: color-mix(in oklab, var(--sp-accent) 60%, var(--sidebar));
+  --sp-card-head: color-mix(in oklab, var(--sp-accent) 20%, var(--sp-surface));
+}

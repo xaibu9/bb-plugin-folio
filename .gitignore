@@ -1,0 +1,6 @@
+dist/
+node_modules/
+.claude/
+e2e/out/
+refs/
+announce/raw/
